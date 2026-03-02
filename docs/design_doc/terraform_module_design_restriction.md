@@ -1,4 +1,4 @@
-# Design Doc: Google Group Terraform モジュール設計
+# Design Doc: Google Group Terraform モジュール設計 (アドレス名の制限)
 
 ## Status
 In Review

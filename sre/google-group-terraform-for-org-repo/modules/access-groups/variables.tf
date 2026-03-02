@@ -1,4 +1,3 @@
-
 variable "project_name" {
   description = "Project Name"
   type        = string
@@ -13,4 +12,11 @@ variable "access_groups" {
     description    = string
   }))
   description = "List of access groups."
+
+  validation {
+    condition = alltrue([
+      for g in var.access_groups : contains(["example.com", "example2.com", "example3.com"], g.domain)
+    ])
+    error_message = "The domain must be one of: 'example.com', 'example2.com', 'example3.com'."
+  }
 }
