@@ -1,4 +1,4 @@
-# Design Doc: モジュール設計におけるドメイン名の制限
+# Design Doc: Google Group Terraform モジュール設計 (ドメイン名の制限)
 
 ## Status
 In Review
@@ -7,7 +7,7 @@ In Review
 Google Group Terraform モジュールにおいて、意図しないドメインでグループが作成されることを防ぐため、入力変数に対して Terraform ネイティブの `validation` ブロックを用いたドメイン名の制限を行う設計ドキュメント。
 
 ## 背景・目的 (Context & Goals)
-これまでの設計では、各モジュール（`access-groups`, `collaboration-groups` 等）に渡す `domain` 変数には任意の文字列が入力可能であった。そのため、タイポや意図的な設定ミスにより、組織外のドメイン（例: `gmail.com` や誤ったスペルのドメイン）を用いた不正なグループが作成されてしまうリスクがあった。
+現在の設計では、各モジュール（`access-groups`, `collaboration-groups` 等）に渡す `domain` 変数には任意の文字列が入力可能である。そのため、タイポや意図的な設定ミスにより、組織外のドメイン（例: `gmail.com` や誤ったスペルのドメイン）を用いた不正なグループが作成されてしまうリスクがあった。
 
 静的解析ツール（Trivy/tfsec, Conftest等）によるCIでのチェックも有効だが、より開発サイクルの早い段階（`terraform plan` 実行時）でフィードバックを得るため、Terraform モジュール自身にバリデーションを組み込むことを目的とする。
 

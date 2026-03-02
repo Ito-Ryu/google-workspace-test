@@ -20,4 +20,14 @@ variable "collab_external_groups" {
     ])
     error_message = "The domain must be one of: 'example.com', 'example2.com', 'example3.com'."
   }
+
+  validation {
+    condition = alltrue([
+      for g in var.collab_external_groups : contains([
+        "developers", "admins", "operators", "viewers", "editors", "maintainers",
+        "approvers", "reviewers", "auditors", "leads", "owners", "users"
+      ], g.role)
+    ])
+    error_message = "The role must be one of: 'developers', 'admins', 'operators', 'viewers', 'editors', 'maintainers', 'approvers', 'reviewers', 'auditors', 'leads', 'owners', 'users'."
+  }
 }
