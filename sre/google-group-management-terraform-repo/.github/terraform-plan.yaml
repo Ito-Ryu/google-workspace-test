@@ -1,0 +1,71 @@
+name: "Terraform Plan"
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    branches:
+      - main
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read       # Required to checkout the repository code
+      pull-requests: write # Required to comment the Terraform plan output on the PR
+      id-token: write      # Required for Google Cloud authentication via OIDC
+
+    defaults:
+      run:
+        working-directory: ./project-1-repository/google_group
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v.6.0.2
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4.0.0
+        with:
+          terraform_version: "1.1.7"
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
+        continue-on-error: true # Continue to the next step to comment the result even if it fails
+
+      # Comment the result of the Plan on the PR
+      - name: Comment PR
+        uses: actions/github-script@v7
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Plan 📖`${{ steps.plan.outcome }}`
+            
+            <details><summary>Show Plan</summary>
+            
+            ```
+            ${process.env.PLAN}
+            ```
+            
+            </details>`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+            
+      - name: Check Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
