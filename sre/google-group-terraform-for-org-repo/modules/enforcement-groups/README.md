@@ -12,7 +12,7 @@
 ```hcl
 module "enforcement_groups" {
   source             = "path/to/modules/enforcement-groups"
-  customer_id        = "C0123abcd"
+  project_name       = "test"
   enforcement_groups = [
     {
       group_description = "mfa-required"

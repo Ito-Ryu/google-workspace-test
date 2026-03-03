@@ -12,7 +12,6 @@
 ```hcl
 module "collaboration_external_groups" {
   source       = "path/to/modules/collaboration-groups-external"
-  customer_id  = "C0123abcd"
   project_name = "test"
   collab_external_groups = [
     {

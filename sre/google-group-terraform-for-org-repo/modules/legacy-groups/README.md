@@ -13,7 +13,6 @@
 ```hcl
 module "legacy_groups" {
   source      = "path/to/modules/old-groups"
-  customer_id = "C0123abcd"
   legacy_groups  = [
     {
       group_name     = "legacy-group"
