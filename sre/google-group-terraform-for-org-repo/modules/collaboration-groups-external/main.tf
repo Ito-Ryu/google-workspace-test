@@ -20,7 +20,7 @@ locals {
 resource "google_cloud_identity_group" "group" {
   for_each     = local.groups
   display_name = "${var.project_name}.external.collab.${each.value.target}-${each.value.role}"
-  parent       = "customers/C0123abcd"
+  parent       = "customers/C0123abcd" # TODO: Change to your Google Workspace customer ID.
 
   group_key {
     id = lower("${var.project_name}.external.collab.${each.value.target}-${each.value.role}@${each.value.domain}")
